@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "./src/navigation/TabNavigator";
 import FavouriteCoinsProvider from "./src/context/FavContext";
 import * as Notifications from "expo-notifications";
+import PortfolioCoinsProvider from "./src/context/PortfolioContext";
 
 const REFRESH_INTERVAL = 1000; // 1s
 
@@ -52,7 +53,7 @@ const App = () => {
       let percentage = absoluteChange * 100;
       return {
         ...item,
-        id: item.symbol,
+        id: item.symbol.replace("USDT", ""),
         percentage: percentage.toFixed(2),
         change15s: 0,
       };
@@ -69,12 +70,14 @@ const App = () => {
 
   const notificationSchedule = async (coin) => {
     let difference = coin.lastPr - coin.open24h;
-        let absoluteChange = difference / coin.open24h;
-        let percentage = absoluteChange * 100;
+    let absoluteChange = difference / coin.open24h;
+    let percentage = absoluteChange * 100;
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: `Lookout! ${(coin.symbol.replace("USDT", ""))}'s price. 📬`,
-        body: `Price is ${(coin.lastPr)}. Change in Price: ${percentage.toFixed(2)}% in 24 hours.`,
+        title: `Lookout! ${coin.symbol.replace("USDT", "")}'s price. 📬`,
+        body: `Price is ${coin.lastPr}. Change in Price: ${percentage.toFixed(
+          2
+        )}% in 24 hours.`,
       },
       trigger: { seconds: 30, repeats: false },
     });
@@ -83,7 +86,7 @@ const App = () => {
   const percentageChangeNotification = async (coin, message) => {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: `Lookout! ${(coin.symbol.replace("USDT", ""))}'s price. 📬`,
+        title: `Lookout! ${coin.symbol.replace("USDT", "")}'s price. 📬`,
         body: message,
       },
       trigger: { seconds: 30, repeats: true },
@@ -96,7 +99,7 @@ const App = () => {
         let difference = coin.lastPr - coin.open24h;
         let absoluteChange = difference / coin.open24h;
         let percentage = absoluteChange * 100;
-        if((percentage).toFixed(2) >= 2 || (percentage).toFixed(2) <= 2) {
+        if (percentage.toFixed(2) >= 5 || percentage.toFixed(2) <= -5) {
           notificationSchedule(coin);
         }
       });
@@ -105,7 +108,7 @@ const App = () => {
 
   let previousPercentages = {}; // Store previous percentages for each coin
 
-const checkChangeinPercentage = () => {
+  const checkChangeinPercentage = () => {
     if (mainData) {
       mainData.map((coin) => {
         let difference = coin.lastPr - coin.open24h;
@@ -117,9 +120,17 @@ const checkChangeinPercentage = () => {
           const previousPercentage = previousPercentages[coin.symbol];
           const difference1 = percentage - previousPercentage;
           console.log(difference1);
-          if (Math.abs(difference1) >= 2 || difference1 === 5 || difference1 === -5) {
+          if (
+            Math.abs(difference1) >= 2 ||
+            difference1 === 5 ||
+            difference1 === -5
+          ) {
             // Trigger notification for significant change
-            setNotifyMessage(`Price is ${(coin.lastPr)}. Change in Price: ${difference1.toFixed(2)}% in 30 seconds.`)
+            setNotifyMessage(
+              `Price is ${coin.lastPr}. Change in Price: ${difference1.toFixed(
+                2
+              )}% in 30 seconds.`
+            );
             percentageChangeNotification(coin, notifyMessage);
           }
         }
@@ -134,7 +145,6 @@ const checkChangeinPercentage = () => {
     }
   };
 
-
   useEffect(() => {
     if (mainData) {
       getNotificationPermissions();
@@ -145,7 +155,6 @@ const checkChangeinPercentage = () => {
   useEffect(() => {
     if (mainData) {
       checkChangeinPrice();
-      
     }
     const interval = setInterval(checkChangeinPrice, 30000);
 
@@ -154,13 +163,15 @@ const checkChangeinPercentage = () => {
 
   return (
     <dataContext.Provider value={{ mainData, setMainData }}>
-      <FavouriteCoinsProvider>
-        <View style={{ flex: 1, backgroundColor: "#222" }}>
-          <NavigationContainer>
-            <TabNavigator />
-          </NavigationContainer>
-        </View>
-      </FavouriteCoinsProvider>
+      <PortfolioCoinsProvider>
+        <FavouriteCoinsProvider>
+          <View style={{ flex: 1, backgroundColor: "#222" }}>
+            <NavigationContainer>
+              <TabNavigator />
+            </NavigationContainer>
+          </View>
+        </FavouriteCoinsProvider>
+      </PortfolioCoinsProvider>
     </dataContext.Provider>
   );
 };

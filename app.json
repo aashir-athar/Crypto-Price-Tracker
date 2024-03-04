@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#222222"
-      }
+      },
+      "package": "com.iamaashirathar.cryptopricedetector"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ec02b11f-266c-49bb-8d13-bb3c8a4c82bf"
+      }
     }
   }
 }

@@ -17,6 +17,7 @@ const CoinDetails = ({ route }) => {
     high24h,
     low24h,
     change15s,
+    change1h
   } = route.params;
   const favCoins = useContext(FavContext);
   const isFavourite = favCoins.ids.includes(id);
@@ -44,6 +45,9 @@ const CoinDetails = ({ route }) => {
           />
           {change15s && (
             <MiniDataView label="Change (15s)" value={change15s + "%"} />
+          )}
+          {change1h && (
+            <MiniDataView label="Change (1h)" value={change15s + "%"} />
           )}
           <MiniDataView
             label="Funding Rate"

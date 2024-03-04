@@ -22,7 +22,7 @@ const FavouriteCoinsScreen = ({ navigation }) => {
           navigation.navigate("Coin-Details", {
             symbol: item.symbol,
             price: item.lastPr,
-            id: item.id,
+            id: item.id.replace("USDT", ""),
             change24h: percentage,
             fundingRate: item.fundingRate,
             high24h: item.high24h,

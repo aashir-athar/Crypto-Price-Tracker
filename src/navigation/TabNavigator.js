@@ -5,8 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // Import custom stacks for better code organization
 import MainStack from "./MainStack";
 import FavouriteStack from "./FavouriteStack";
-import FundingStack from "./FundingStack";
 import CustomHomeButton from "../components/CustomHomeButton";
+import GainerStack from "./GainerStack";
+import PortfolioScreen from "../screens/PortfolioScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,8 +25,8 @@ const TabNavigator = ({ navigation }) => {
       }}
     >
       <Tab.Screen
-        name="Top Gainers (1m)"
-        component={FundingStack}
+        name="Gainers"
+        component={GainerStack}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
@@ -54,6 +55,19 @@ const TabNavigator = ({ navigation }) => {
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="account-heart"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Portfolio"
+        component={PortfolioScreen}
+        options={{
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons
+              name="account"
               size={size}
               color={color}
             />
